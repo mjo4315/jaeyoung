@@ -8,5 +8,136 @@
 만약 조회 프로그램 작성에 10분이 걸리는 사람은 이 흐름에 대해서 자세히 파악하고 있어 막힘없이 프로그램을 작성하고
 1시간이 걸리는 사람은 이 흐름에 익숙하지 않아 속도가 느려진다고 생각한다.
 
+<pre>
+  <code>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
 
+    <%@ taglib prefix="h5" uri="/WEB-INF/h5-ui-core.tld"%>
+    <%@ taglib prefix="biz" uri="/WEB-INF/h5-biz-core.tld"%>
 
+    <h5:H5View>
+      <h5:Service>
+        <h5:Data>
+          <h5:Codes>
+            <h5:Code name="grade_cd" target="COMMON_CODE" target="GRADE_CD_MJY">
+            </h5:Code>
+          </h5:Codes>
+          <h5:Messages>
+            <h5:Message type="MT_JY0002_01" id="ME_JY0002_01">
+            </h5:Message>
+            <h5:Message type="MT_JY0002_02" id="ME_JY0002_02">
+            </h5:Message>
+          </h5:Messages>
+        </h5:Data>
+        <h5:Actions>
+          <h5:Action name="retrieve"  type="SERVICE_CALL" target="JY0002_00_R01">
+            <h5:Message id="ME_JY0002_01">
+            </h5:Message>
+            <h5:ResultEvent>
+              <h5:Action type="BIND_DATA">
+                <h5:Message id="ME_JY0002_02">
+                </h5:Message>
+              </h5:Action>
+            </h5:ResultEvent>
+          </h5:Action>
+          <h5:Action name="new" type="NEW_DATA">
+            <h5:Message id="ME_JY0002_02">
+              <h5:Column id="hr_nm" autoValue="true">
+              </h5:Column>
+            </h5:Message>
+          </h5:Action>
+          <h5:Action name="save" type="SERVICE_CALL" target="JY0002_00_S01" serviceCallType="SAVE" useConfirm="true">
+            <h5:Message id="ME_JY0002_02">
+            </h5:Message>
+            <h5:ResultEvent>
+              <h5:Action type="ALERT">
+              </h5:Action>
+              <h5:Action type="RUN_ACTION" target="retrieve">
+              </h5:Action>
+            </h5:ResultEvent>
+            <h5:FaultEvent>
+              <h5:Action type="ALERT">
+              </h5:Action>
+            </h5:FaultEvent>
+          </h5:Action>
+        </h5:Actions>
+      </h5:Service>
+      <h5:Layout>
+        <h5:SearchBox>
+          <h5:Grid id="condition" dataProvider="ME_JY0002_01">
+            <h5:GridRow>
+              <h5:GridColumn>
+                <h5:ComboBox bindingColumn="grade_cd" listProvider="grade_cd" firstItemLabel="전체" firstItemValue="">
+                </h5:ComboBox>
+              </h5:GridColumn>
+              <h5:GridColumn>
+                <h5:Label label="이름검색" labelCode="">
+                </h5:Label>
+              </h5:GridColumn>
+            </h5:GridRow>
+          </h5:Grid>
+          <h5:ActionBox>
+            <h5:SearchButton actionName="retrieve" label="조회" labelCode="BTN_RETRIEVE">
+            </h5:SearchButton>
+          </h5:ActionBox>
+        </h5:SearchBox>
+        <h5:ContentBox>
+          <h5:TitleBox label="간단인사리스트" labelCode="">
+            <h5:ActionBox>
+              <h5:NewButton actionName="new" label="입력" labelCode="NEW"/>
+              <h5:SaveButton actionName="save" label="저장" labelCode="SAVE"/>
+            </h5:ActionBox>
+          </h5:TitleBox>
+          <h5:DataGrid id="mySheetTop" dataProvider="ME_JY0002_02" width="100%" height="30%" showSeq="true" showStatus="true" showDelete="true">
+            <h5:DataGridHeaderRow>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="사번" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="이름" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="부서" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="직급" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="근무지" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="입사일" labelCode="" />
+              </h5:DataGridHeaderColumn>
+              <h5:DataGridHeaderColumn>
+                <h5:Label label="퇴사일" labelCode="" />
+              </h5:DataGridHeaderColumn>
+            </h5:DataGridHeaderRow>
+            <h5:DataGridBodyRow>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="hr_no" bindingColumn="hr_no"></h5:TextInput>
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="hr_nm" bindingColumn="hr_nm"></h5:TextInput>
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="org_nm" bindingColumn="org_nm"></h5:TextInput>
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:ComboBox bindingColumn="grade_cd" listProvider="grade_cd" mandatory="true" useFirstItem="true" firstItemLabel="선택" firstItemValue="" />
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="place_hometown" bindingColumn="place_hometown"></h5:TextInput>
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="hire_ymd" bindingColumn="hire_ymd"></h5:TextInput>
+              </h5:DataGridColumn>
+              <h5:DataGridColumn align="center" hidden="false" width="100">
+                <h5:TextInput id="retire_ymd" bindingColumn="retire_ymd"></h5:TextInput>
+              </h5:DataGridColumn>
+            </h5:DataGridBodyRow>
+          </h5:DataGrid>
+        </h5:ContentBox>
+      </h5:Layout>
+    </h5:H5View>
+  </code>
+</pre>
